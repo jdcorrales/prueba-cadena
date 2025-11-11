@@ -508,3 +508,133 @@ Cada push al repositorio activa CodePipeline.
 CodeBuild instala dependencias, ejecuta npm run build y sincroniza con S3.
 
 El sitio web se actualiza automáticamente en la URL de S3 o CloudFront.
+
+---
+
+5. Explica el concepto de Amazon S3 y sus casos de uso comunes en aplicaciones en la nube.
+
+Proporciona un ejemplo de cómo subir y recuperar archivos desde S3 usando fragmentos de código.
+
+# ☁️ Amazon S3: Concepto, Usos Comunes y Ejemplo de Uso con Código
+
+## 🧩 ¿Qué es Amazon S3?
+
+**Amazon Simple Storage Service (S3)** es un servicio de almacenamiento en la nube altamente escalable, seguro y duradero ofrecido por **Amazon Web Services (AWS)**.
+Permite almacenar cualquier tipo de dato (imágenes, videos, documentos, archivos estáticos, backups, etc.) en forma de **objetos**, dentro de **buckets** (contenedores de almacenamiento).
+
+Cada objeto en S3 tiene:
+- Un **nombre único (key)**.
+- Los **datos** (contenido del archivo).
+- Y **metadatos** opcionales (como tipo MIME, fecha de subida, permisos, etc.).
+
+S3 está diseñado para ofrecer:
+- **Alta disponibilidad** (99.99% de uptime).
+- **Durabilidad de 99.999999999% (11 nueves)**.
+- **Integración directa** con servicios como Lambda, CloudFront, CodeBuild, y más.
+
+---
+
+## 💡 Casos de uso comunes de Amazon S3
+
+| Caso de uso | Descripción |
+|--------------|-------------|
+| **Hosting de sitios web estáticos** | Alojar aplicaciones front-end como Vue.js, React o Angular. |
+| **Almacenamiento de backups** | Guardar respaldos de bases de datos, archivos o snapshots del sistema. |
+| **Data lakes y análisis de datos** | Centralizar grandes volúmenes de información para análisis con Athena o Redshift. |
+| **Almacenamiento de medios** | Guardar imágenes, audios o videos para servicios web y aplicaciones móviles. |
+| **Integración con CI/CD** | Desplegar artefactos de build o resultados de compilación. |
+| **Recuperación ante desastres** | Replicación entre regiones y versiones de archivos. |
+
+---
+
+## 🧱 Ejemplo: Subir y recuperar archivos desde Amazon S3
+
+A continuación se muestra cómo interactuar con Amazon S3 usando **Python** y el SDK **boto3**.
+
+---
+
+### 1. 📦 Instalación del SDK
+
+Instala la biblioteca oficial de AWS para Python:
+
+```bash
+pip install boto3
+```
+
+### 2. 🔑 Configurar credenciales de AWS
+
+Asegúrate de tener configuradas tus credenciales (Access Key y Secret Key):
+
+```bash
+aws configure
+```
+Esto almacenará tus credenciales en:
+```bash
+~/.aws/credentials
+```
+
+### 🚀 Subir un archivo a S3
+```python
+import boto3
+
+# Crear un cliente de S3
+s3 = boto3.client('s3')
+
+# Parámetros
+bucket_name = 'mi-bucket-ejemplo'
+file_name = 'foto.png'
+object_name = 'imagenes/foto.png'
+
+# Subir archivo
+try:
+    s3.upload_file(file_name, bucket_name, object_name)
+    print("✅ Archivo subido exitosamente a S3.")
+except Exception as e:
+    print(f"❌ Error al subir el archivo: {e}")
+```
+
+### 4. 📥 Descargar o recuperar un archivo desde S3
+```python
+import boto3
+
+s3 = boto3.client('s3')
+
+bucket_name = 'mi-bucket-ejemplo'
+object_name = 'imagenes/foto.png'
+download_path = 'descargas/foto_descargada.png'
+
+try:
+    s3.download_file(bucket_name, object_name, download_path)
+    print("✅ Archivo descargado exitosamente desde S3.")
+except Exception as e:
+    print(f"❌ Error al descargar el archivo: {e}")
+
+```
+### 5. 🔗 Generar un enlace temporal de acceso (Pre-signed URL)
+
+Esto permite compartir temporalmente un archivo sin hacerlo público.
+
+```python
+import boto3
+
+s3 = boto3.client('s3')
+
+url = s3.generate_presigned_url(
+    'get_object',
+    Params={'Bucket': 'mi-bucket-ejemplo', 'Key': 'imagenes/foto.png'},
+    ExpiresIn=3600  # 1 hora
+)
+
+print("🔗 URL temporal de descarga:")
+print(url)
+```
+
+🌍 Consideraciones de seguridad
+
+Usa políticas de IAM para restringir accesos según el principio de menor privilegio.
+
+Habilita el versionado del bucket para evitar pérdida de datos.
+
+Usa S3 Block Public Access si no deseas que los archivos sean accesibles públicamente.
+
+Habilita encriptación automática con SSE-S3 o SSE-KMS.
