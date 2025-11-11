@@ -1,0 +1,55 @@
+# =======================================
+# .NET / C# General
+# =======================================
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+[Tt]emp/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# =======================================
+# Visual Studio / VS Code
+# =======================================
+.vs/
+.vscode/
+*.code-workspace
+*.ncb
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# =======================================
+# Test Results
+# =======================================
+TestResult*/
+[Tt]est[Rr]esult*/
+*.coverage
+*.coveragexml
+*.log
+*.trx
+
+# =======================================
+# NuGet
+# =======================================
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuspec
+project.lock.json
+project.fragment.lock.json
+
+# =======================================
+# Docker / Compose
+# =======================================
+*.tar
+*.pid
+.env
+.env.*
+*.bak
