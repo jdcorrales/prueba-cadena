@@ -241,6 +241,7 @@ def lambda_handler(event, context):
             'statusCode': 400,
             'body': json.dumps({'error': 'Método no soportado'})
         }
+```
 
 Configuración en AWS
 1. Crear una tabla DynamoDB
@@ -271,9 +272,131 @@ Implementar y desplegar (Deploy API).
 
 🧪 Pruebas con cURL
 ➕ Crear usuario (POST)
+``` bash
 curl -X POST https://tu-api.amazonaws.com/usuarios \
 -H "Content-Type: application/json" \
--d '{"id": "001", "nombre": "Juan Corrales"}'
+-d '{"id": "001", "nombre": "User Name"}'
+```
 
 🔍 Consultar usuario (GET)
+``` bash
 curl "https://tu-api.amazonaws.com/usuarios?id=001"
+```
+
+---
+3. Explica el concepto de DevOps y su importancia en el desarrollo moderno de software.
+Describe las prácticas y herramientas clave utilizadas en DevOps, enfocándote en los servicios de AWS como AWS CodeCommit, AWS CodeBuild, AWS CodeDeploy y AWS CodePipeline.
+
+# ⚙️ DevOps y su importancia en el desarrollo moderno de software
+
+## 🧠 ¿Qué es DevOps?
+
+**DevOps** es una filosofía y conjunto de prácticas que **integran el desarrollo de software (Dev)** y las **operaciones de TI (Ops)** con el objetivo de mejorar la **colaboración**, **automatización**, **velocidad de entrega** y **calidad** del software.
+
+Su propósito es **romper las barreras tradicionales** entre los equipos de desarrollo y operaciones, permitiendo entregar aplicaciones más rápido, con menos errores y respondiendo de forma ágil a las necesidades del negocio.
+
+---
+
+## 🚀 Importancia de DevOps en el desarrollo moderno
+
+En el contexto actual, donde las organizaciones requieren actualizaciones continuas y despliegues rápidos, DevOps ofrece:
+
+| Beneficio | Descripción |
+|------------|-------------|
+| ⚡ **Entrega continua (Continuous Delivery)** | Permite lanzar nuevas versiones de software de forma frecuente y confiable. |
+| 🧩 **Colaboración mejorada** | Une equipos antes aislados (desarrollo, QA, operaciones) bajo objetivos comunes. |
+| 🔄 **Automatización** | Reduce errores humanos al automatizar compilación, pruebas y despliegues. |
+| 🧠 **Monitoreo constante** | Facilita la detección temprana de fallos y el aprendizaje continuo. |
+| 💰 **Eficiencia en costos y tiempo** | Menos tiempo invertido en tareas manuales y más foco en innovación. |
+
+DevOps no es una herramienta, sino una **cultura apoyada por procesos automatizados** y un conjunto de servicios tecnológicos.
+
+---
+
+## 🧰 Prácticas clave de DevOps
+
+| Práctica | Descripción |
+|-----------|-------------|
+| **Integración continua (CI)** | Los desarrolladores integran código frecuentemente en un repositorio compartido donde se ejecutan pruebas automáticas. |
+| **Entrega continua (CD)** | Automatiza el despliegue del código validado hacia entornos de producción o preproducción. |
+| **Infraestructura como código (IaC)** | La infraestructura se gestiona y aprovisiona mediante archivos de configuración (ej. AWS CloudFormation, Terraform). |
+| **Monitoreo y retroalimentación** | Se observan métricas y logs para optimizar rendimiento, seguridad y experiencia del usuario. |
+| **Automatización de pruebas** | Cada cambio se valida mediante pruebas unitarias, de integración y funcionales. |
+
+---
+
+## ☁️ Herramientas de AWS para DevOps
+
+AWS proporciona un conjunto completo de servicios administrados que facilitan la implementación de prácticas DevOps:
+
+### 1. 🧾 **AWS CodeCommit**
+> Sistema de control de versiones privado y seguro basado en **Git**, administrado por AWS.
+
+- Permite almacenar y versionar el código fuente.
+- Integra permisos y autenticación con AWS IAM.
+- Ideal para equipos distribuidos.
+
+**Ejemplo de uso:**
+```bash
+git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/mi-repositorio
+git add .
+git commit -m "Primera versión"
+git push origin main
+```
+
+### 2. 🏗️ AWS CodeBuild
+> Servicio de compilación y pruebas automatizadas que genera artefactos listos para desplegar.
+
+- Ejecuta tareas de build dentro de contenedores gestionados.
+- Compatible con múltiples lenguajes (Python, Java, Node.js, C#, etc.).
+- Se integra fácilmente con CodeCommit, CodePipeline o GitHub.
+**Ejemplo de uso (buildspec.yml)**
+``` yaml
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Instalando dependencias..."
+      - pip install -r requirements.txt
+  build:
+    commands:
+      - echo "Ejecutando pruebas..."
+      - pytest
+artifacts:
+  files:
+    - '**/*'
+```
+### 3. 🚀 AWS CodeDeploy
+> Automatiza el despliegue de aplicaciones en distintos entornos:
+- Instancias EC2
+- Clústeres ECS
+- AWS Lambda
+- Servidores on-premise
+Permite actualizaciones sin tiempo de inactividad (deployments blue/green o rolling).
+
+**Ejemplo de configuración (appspec.yml)**
+``` yaml
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html
+hooks:
+  AfterInstall:
+    - location: scripts/restart_server.sh
+      timeout: 180
+      runas: root
+```
+
+### 🔄 AWS CodePipeline
+> Servicio que orquesta todo el flujo CI/CD, conectando CodeCommit, CodeBuild y CodeDeploy.
+
+Cada cambio en el repositorio desencadena automáticamente una serie de etapas:
+
+- CodeCommit: Detecta el cambio de código.
+- CodeBuild: Compila y prueba el código.
+- CodeDeploy: Despliega la nueva versión.
+
+**Ejemplo visual del flujo:**
+
+[CodeCommit] → [CodeBuild] → [CodeDeploy] → [Producción]
