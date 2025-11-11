@@ -1,0 +1,11 @@
+services:
+  python-app:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: python-app
+    volumes:
+      - ./python:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5000 --reload
+    ports:
+      - 5000:5000
