@@ -400,3 +400,111 @@ Cada cambio en el repositorio desencadena automáticamente una serie de etapas:
 **Ejemplo visual del flujo:**
 
 [CodeCommit] → [CodeBuild] → [CodeDeploy] → [Producción]
+
+---
+4. Describe el proceso para configurar una tubería de integración y entrega continua (CI/CD) usando AWS CodePipeline y AWS CodeBuild.
+Proporciona un ejemplo de cómo implementar (desplegar) una aplicación web usando estos servicios con fragmentos de código.
+
+# Configuración de una tubería CI/CD con AWS CodePipeline y AWS CodeBuild para una aplicación Vue.js desplegada en Amazon S3
+
+## 🧩 Introducción
+
+Este flujo permite que cada cambio en el código fuente se compile, se pruebe y se despliegue automáticamente en un bucket de S3, donde se aloja la aplicación web estática de **Vue.js**.
+
+
+## ⚙️ Arquitectura general del proceso CI/CD
+
+1. **Repositorio del código fuente**: El código se almacena en **AWS CodeCommit**
+2. **CodePipeline**: Orquesta el flujo de trabajo completo (fuente → build → despliegue).
+3. **CodeBuild**: Compila y construye la aplicación Vue.js.
+4. **Amazon S3**: Aloja los archivos estáticos generados (HTML, JS, CSS).
+5. **Amazon CloudFront (opcional)**: Distribuye el contenido globalmente con caché y HTTPS.
+
+---
+
+## 🧱 Paso a paso para configurar la tubería CI/CD
+
+### 1. Crear el bucket S3 para el hosting
+```bash
+aws s3 mb s3://mi-vue-app-bucket
+aws s3 website s3://mi-vue-app-bucket/ --index-document index.html --error-document index.html
+```
+
+Habilita el acceso público o configura una distribución de CloudFront para servir la aplicación.
+
+### 2. Configurar el archivo buildspec.yml para AWS CodeBuild
+
+Dentro del proyecto Vue, crea el archivo buildspec.yml en la raíz del repositorio. Este archivo define las fases de compilación y despliegue.
+
+``` yaml
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Instalando dependencias..."
+      - npm install
+  build:
+    commands:
+      - echo "Construyendo la aplicación Vue..."
+      - npm run build
+  post_build:
+    commands:
+      - echo "Copiando archivos al bucket S3..."
+      - aws s3 sync dist/ s3://mi-vue-app-bucket/ --delete
+artifacts:
+  files:
+    - '**/*'
+  base-directory: dist
+```
+### 3. Crear un proyecto de CodeBuild
+En la consola de AWS CodeBuild:
+
+- Selecciona Create Build Project.
+- Fuente: CodeCommit.
+- Entorno de build: “Managed image” → Ubuntu → Node.js runtime.
+- Agrega permisos para acceder a S3.
+- Especifica el archivo buildspec.yml.
+
+El rol IAM del proyecto debe incluir permisos como:
+``` json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": ["arn:aws:s3:::mi-vue-app-bucket/*"]
+    }
+  ]
+}
+```
+
+### 4. Crear la tubería en AWS CodePipeline
+
+En la consola de AWS CodePipeline:
+
+Paso 1 – Fuente
+ - Elige el proveedor CodeCommit.
+ - Conecta el repositorio y la rama principal.
+
+Paso 2 – Build
+ - Selecciona el proyecto de CodeBuild creado anteriormente.
+
+Paso 3 – Deploy
+- Tipo: Amazon S3.
+- Especifica el bucket mi-vue-app-bucket.
+
+Cada vez que se haga un commit al repositorio, la tubería ejecutará automáticamente la construcción y despliegue.
+
+🚀 Despliegue automático
+
+Una vez configurado todo:
+
+Cada push al repositorio activa CodePipeline.
+
+CodeBuild instala dependencias, ejecuta npm run build y sincroniza con S3.
+
+El sitio web se actualiza automáticamente en la URL de S3 o CloudFront.
