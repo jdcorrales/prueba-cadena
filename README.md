@@ -144,5 +144,136 @@ Ejemplo: Desarrollo de sistemas bancarios, de nómina, ERP, CRM donde las transa
 
 Ejemplo: Desarrollo de una aplicación de comercio electrónico que maneja muchos productos y sesiones simultaneas, que necesita rapidez más que consistencia relacional.
 
+---
 
+2. ¿Qué es AWS Lambda y cómo respalda la computación sin servidor (serverless)?
+Proporciona un ejemplo de una aplicación sin servidor usando AWS Lambda con fragmentos de código.
 
+Es un servicio de computación sin servidor (serverless) que permite ejecutar código sin aprovisionar ni administrar servidores.
+
+Solo escribes tu función y AWS se encarga de:
+
+* Ejecutarla bajo demanda.
+* Escalar automáticamente según la carga.
+* Cobrarte solo por el tiempo de ejecución (en milisegundos) y la memoria usada.
+
+La arquitectura serverless se basa en eventos. En lugar de mantener servidores encendidos, el código se ejecuta únicamente cuando ocurre un evento desencadenante (trigger), como:
+
+* Una solicitud HTTP (API Gateway).
+* Un nuevo archivo en S3.
+* Un mensaje en una cola SQS o SNS.
+* Un cambio en una tabla DynamoDB.
+* Un evento programado (CloudWatch Events).
+
+Con esto:
+
+* No pagas por servidores inactivos.
+* Escala automáticamente según la demanda.
+* Reduces mantenimiento (no hay parches, ni administración de infraestructura).
+
+### Ejemplo:
+
+La aplicación implementa un **backend sin servidor (serverless)** usando:
+
+- **AWS Lambda:** ejecuta la lógica del backend.
+- **Amazon API Gateway:** expone la API REST al público.
+- **Amazon DynamoDB:** almacena los datos de usuarios.
+
+## 🧱 Arquitectura
+
+Cliente HTTP
+
+↓
+
+Amazon API Gateway (endpoint REST)
+
+↓
+
+AWS Lambda (ejecuta la lógica del backend)
+
+↓
+
+Amazon DynamoDB (guarda los datos)
+
+1. El cliente envía una solicitud HTTP (`POST` o `GET`) a la API.
+2. API Gateway invoca la función **Lambda**.
+3. Lambda procesa la solicitud y lee/escribe en **DynamoDB**.
+4. Lambda devuelve una respuesta JSON al cliente.
+
+## 🧩 Código de la función Lambda (Python)
+
+```python
+import json
+import boto3
+from datetime import datetime
+
+# Conexión a DynamoDB
+dynamodb = boto3.resource('dynamodb')
+tabla = dynamodb.Table('Usuarios')
+
+def lambda_handler(event, context):
+    # Determinar método HTTP
+    metodo = event['httpMethod']
+
+    if metodo == 'POST':
+        body = json.loads(event['body'])
+        usuario = {
+            'id': body['id'],
+            'nombre': body['nombre'],
+            'fecha_registro': datetime.utcnow().isoformat()
+        }
+        tabla.put_item(Item=usuario)
+        return {
+            'statusCode': 201,
+            'body': json.dumps({'mensaje': 'Usuario creado', 'usuario': usuario})
+        }
+
+    elif metodo == 'GET':
+        id_usuario = event['queryStringParameters']['id']
+        respuesta = tabla.get_item(Key={'id': id_usuario})
+        return {
+            'statusCode': 200,
+            'body': json.dumps(respuesta.get('Item', {}))
+        }
+
+    else:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Método no soportado'})
+        }
+
+Configuración en AWS
+1. Crear una tabla DynamoDB
+
+Nombre de la tabla: Usuarios
+
+Clave primaria: id (Tipo: String)
+
+2. Crear la función Lambda
+
+Runtime: Python 3.9
+
+Rol IAM: permisos de acceso a DynamoDB (AmazonDynamoDBFullAccess)
+
+Subir el código anterior o editarlo directamente en la consola de AWS.
+
+3. Crear una API en Amazon API Gateway
+
+Crear una API REST.
+
+Recurso: /usuarios
+
+Métodos: POST y GET
+
+Integración: Lambda Function
+
+Implementar y desplegar (Deploy API).
+
+🧪 Pruebas con cURL
+➕ Crear usuario (POST)
+curl -X POST https://tu-api.amazonaws.com/usuarios \
+-H "Content-Type: application/json" \
+-d '{"id": "001", "nombre": "Juan Corrales"}'
+
+🔍 Consultar usuario (GET)
+curl "https://tu-api.amazonaws.com/usuarios?id=001"
