@@ -1,0 +1,14 @@
+FROM python:3.13.2-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 5000
+
+ENV PYTHONPATH=/app
+
+CMD ["pytest", "-v", "-s"]
+#CMD ["uvicorn", "app.main:run", "--host", "0.0.0.0", "--port", "5000", "--reload", "--http", "h11"]
