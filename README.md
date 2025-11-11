@@ -109,3 +109,40 @@ docker-compose run cesharp-app dotnet test tests/PalindromoApp.Tests
 
 ## Servicios de AWS y Conceptos de Desarrollo desde la Perspectiva de un Desarrollador
 
+1. Describe las diferencias entre Amazon RDS y Amazon DynamoDB. Proporciona casos de uso en los que cada servicio sería más apropiado desde la perspectiva de un desarrollador.
+
+# 🆚 Comparativa: Amazon RDS vs Amazon DynamoDB
+
+| 🌟 **Característica** | 🗃️ **Amazon RDS (Relacional)** | ⚡ **Amazon DynamoDB (NoSQL)** |
+|------------------------|--------------------------------|--------------------------------|
+| 🧩 **Tipo de base de datos** | Relacional (SQL) | NoSQL (clave-valor / documento) |
+| 🧱 **Modelo de datos** | Tablas, filas y columnas con relaciones | Claves y atributos flexibles (sin relaciones) |
+| 💬 **Lenguaje de consulta** | SQL (consultas complejas, joins, subconsultas) | API con operaciones básicas (`GetItem`, `PutItem`, `Query`, `Scan`) |
+| 📜 **Esquema** | Fijo y estructurado | Flexible y dinámico |
+| 🔒 **Transacciones** | Totalmente ACID (Atomicity, Consistency, Isolation, Durability)(consistentes y atómicas) | ACID limitadas, introducidas en 2019 |
+| ⚖️ **Consistencia** | Siempre fuerte (ACID) | Eventual o fuerte opcional |
+| 📈 **Escalabilidad** | Vertical (aumentar tamaño de instancia o réplicas) | Horizontal automática y sin intervención manual |
+| ⚡ **Rendimiento** | Milisegundos altos (depende del hardware y consultas) | Milisegundos bajos o microsegundos con **DAX** |
+| 🧰 **Administración** | Requiere mantenimiento (backups, actualizaciones, monitoreo) | Casi sin mantenimiento (**serverless**) |
+| 💰 **Costo** | Basado en tipo de instancia y almacenamiento | Basado en capacidad provisionada o bajo demanda |
+| 🧠 **Casos de uso ideales** | ERP, CRM, sistemas financieros, gestión de inventarios | Juegos, IoT, e-commerce, sesiones de usuario, catálogos |
+| ⚙️ **Motores soportados** | MySQL, PostgreSQL, MariaDB, Oracle, SQL Server | Motor propietario de AWS |
+
+## Casos de uso
+🧠 Amazon RDS (Relacional)
+
+✔️ Cuando se necesita integridad referencial.
+✔️ Cuando se maneja una alta transaccionalidad.
+✔️ Cuand se necesita desarrollar aplicaciones atómicas.
+
+Ejemplo: Desarrollo de sistemas bancarios, de nómina, ERP, CRM donde las transacciones deben ser totalmente consistentes y autidables.
+
+⚡ Amazon DynamoDB (NoSQL)
+✔️ Cuando se requiere una escalabilidad y baja latencia con datos simples y acceso rápido
+✔️ Idela para aplicaciones moviles, IoT, catálogos de productos o sistemas de sesiones.
+✔️ Cuando la estructura de los datos es flexible o cambio con frecuencia
+
+Ejemplo: Desarrollo de una aplicación de comercio electrónico que maneja muchos productos y sesiones simultaneas, que necesita rapidez más que consistencia relacional.
+
+
+
