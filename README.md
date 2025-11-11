@@ -94,14 +94,18 @@ Output: True
 Aplicación en C# (.NET 8) que permite verificar si una palabra o frase es un palíndromo.
 Incluye un conjunto de pruebas unitarias automatizadas usando xUnit.
 
-1️⃣ Ejecutar la aplicación dentro del contenedor
+# Ejecutar la aplicación dentro del contenedor
 
 ```bash
 docker-compose run cesharp-app
 ```
 
-2️⃣ Ejecutar los tests dentro del contenedor
+# Ejecutar los tests dentro del contenedor
 
 ```bash
 docker-compose run cesharp-app dotnet test tests/PalindromoApp.Tests
 ```
+---
+
+## Servicios de AWS y Conceptos de Desarrollo desde la Perspectiva de un Desarrollador
+
