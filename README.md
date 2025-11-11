@@ -80,3 +80,28 @@ curl -X POST "http://localhost:5000/sum-primes" \
 docker-compose run python-app pytest
 ```
 
+---
+
+# 2. C\# Exercise:
+Write a C\# program that reads a string from the console and determines if it is a palindrome (a word, phrase, or sequence that reads the same backward as forward). The program should ignore spaces, punctuation, and case sensitivity. Additionally, the program should handle large strings efficiently and include error handling for invalid inputs.
+Example:
+Input: "A man a plan a canal Panama"
+Output: True
+
+---
+🧠 PalindromoApp
+
+Aplicación en C# (.NET 8) que permite verificar si una palabra o frase es un palíndromo.
+Incluye un conjunto de pruebas unitarias automatizadas usando xUnit.
+
+1️⃣ Ejecutar la aplicación dentro del contenedor
+
+```bash
+docker-compose run cesharp-app
+```
+
+2️⃣ Ejecutar los tests dentro del contenedor
+
+```bash
+docker-compose run cesharp-app dotnet test tests/PalindromoApp.Tests
+```
